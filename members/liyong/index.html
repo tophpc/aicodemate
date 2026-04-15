@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查看 PPT - Li Yong</title>
+    <style>
+        body { margin: 0; background: #f0f2f5; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        .header { background: #fff; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; font-weight: bold; color: #333; }
+        .content { flex: 1; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .fallback { display: none; text-align: center; padding: 20px; }
+        .btn { background: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">AI Agent Training PPT</div>
+    <div class="content">
+        <!-- 
+            Note: On mobile browsers, PDFs usually download instead of rendering inline.
+            We try to embed it, and provide a download link if it fails or is blocked.
+        -->
+        <iframe src="AI_Agent_Training.pdf" title="PDF Viewer"></iframe>
+        
+        <div class="fallback" id="fallback">
+            <p>如果无法预览，请点击下方按钮下载查看：</p>
+            <a href="AI_Agent_Training.pdf" class="btn">📄 下载/打开 PPT</a>
+        </div>
+    </div>
+    <script>
+        // Simple detection: if iframe fails to load content type, show button
+        // But actually, just showing the button always is safer on mobile to avoid "blank screen" confusion
+        // Let's force the button to be visible for mobile users
+        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+            document.getElementById('fallback').style.display = 'block';
+            document.querySelector('iframe').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
