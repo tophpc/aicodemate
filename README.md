@@ -1,2 +1,1 @@
-# aicodemate
-Team Shared Materials &amp; PPTs
+# 团队共享资料库\n\n请将文件放入以你名字命名的文件夹内。推荐使用 PDF 格式以便在线预览。
