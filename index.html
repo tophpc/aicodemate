@@ -2,32 +2,34 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AICodeMate | AI Core</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Code Mate | Core</title>
     <style>
-        :root { --primary: #00f3ff; --bg: #050505; --glass: rgba(10, 15, 30, 0.6); }
+        :root { --primary: #00f3ff; --bg: #050505; --glass: rgba(10, 15, 30, 0.65); }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; width: 100vw; }
+        body { 
+            background: var(--bg); color: #fff; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            overflow-x: hidden; overflow-y: auto; height: 100vh; width: 100vw; 
+        }
         
         /* Canvas Background */
-        #bgCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
 
-        /* Main Overlay */
+        /* Main Container - Scrollable */
         .container {
             position: relative; z-index: 1; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; height: 100vh;
-            text-align: center; padding: 20px;
-            background: radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, var(--bg) 70%);
+            justify-content: center; align-items: center; min-height: 100vh;
+            text-align: center; padding: 40px 20px;
+            background: radial-gradient(circle at center, rgba(0, 243, 255, 0.03) 0%, transparent 70%);
         }
 
-        /* HUD Borders */
+        /* HUD Borders - Hidden on mobile */
         .hud-frame {
-            position: absolute; top: 30px; left: 30px; right: 30px; bottom: 30px;
-            border: 1px solid rgba(0, 243, 255, 0.15); pointer-events: none;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.05);
+            position: fixed; top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 1px solid rgba(0, 243, 255, 0.15); pointer-events: none; z-index: 2;
         }
         .hud-corner {
-            position: absolute; width: 30px; height: 30px; border-color: var(--primary); border-style: solid;
+            position: absolute; width: 20px; height: 20px; border-color: var(--primary); border-style: solid;
         }
         .tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
         .tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
@@ -36,47 +38,55 @@
 
         /* Typography */
         h1 {
-            font-size: 4rem; letter-spacing: 8px; margin-bottom: 15px;
-            text-shadow: 0 0 20px var(--primary), 0 0 40px rgba(0, 243, 255, 0.5);
+            font-size: clamp(2.5rem, 8vw, 5rem); letter-spacing: 4px; margin-bottom: 15px;
+            text-shadow: 0 0 15px var(--primary), 0 0 30px rgba(0, 243, 255, 0.4);
+            font-family: 'Arial Black', Impact, sans-serif; text-transform: uppercase;
             animation: pulse 4s infinite;
-            font-family: 'Arial Black', Impact, sans-serif;
-            text-transform: uppercase;
         }
         .slogan {
-            font-size: 1.2rem; color: #ccc; letter-spacing: 3px; margin-bottom: 50px;
-            border-left: 4px solid var(--primary); padding-left: 20px;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-            font-weight: bold;
+            font-size: clamp(0.9rem, 3vw, 1.3rem); color: #ccc; letter-spacing: 2px; 
+            margin-bottom: 40px; padding: 10px 20px;
+            background: rgba(0, 243, 255, 0.05); border-left: 3px solid var(--primary);
+            backdrop-filter: blur(5px); max-width: 800px;
         }
         .status-bar { 
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            font-size: 0.8rem; color: var(--primary); opacity: 0.6; letter-spacing: 2px;
+            margin-top: 30px; font-size: 0.75rem; color: var(--primary); opacity: 0.5; letter-spacing: 1px;
         }
 
         /* Grid of Nodes */
         .nodes-grid {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 25px;
-            max-width: 1200px; width: 90%; z-index: 2;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+            width: 100%; max-width: 1200px; z-index: 2; padding-bottom: 60px;
         }
         .node-card {
-            background: var(--glass); border: 1px solid rgba(0, 243, 255, 0.3);
-            padding: 25px 50px; min-width: 220px; cursor: pointer;
+            background: var(--glass); border: 1px solid rgba(0, 243, 255, 0.25);
+            padding: 20px 40px; min-width: 200px; cursor: pointer;
             transition: all 0.3s ease; position: relative; overflow: hidden;
-            backdrop-filter: blur(8px); 
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            backdrop-filter: blur(8px); clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            text-decoration: none; color: #fff;
         }
         .node-card:hover {
             background: rgba(0, 243, 255, 0.15); border-color: var(--primary);
-            transform: scale(1.05) translateY(-5px); 
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.5), inset 0 0 20px rgba(0, 243, 255, 0.2);
+            transform: scale(1.05) translateY(-3px); 
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
         }
-        .node-card h3 { font-size: 1.4rem; margin-bottom: 8px; letter-spacing: 2px; }
-        .node-card span { font-size: 0.8rem; color: #888; font-family: monospace; }
+        .node-card h3 { font-size: 1.3rem; margin-bottom: 6px; letter-spacing: 1px; font-weight: 600; }
+        .node-card span { font-size: 0.75rem; color: #888; font-family: monospace; text-transform: uppercase; }
         
-        .loader { color: var(--primary); animation: blink 1s infinite; font-size: 1.2rem; }
+        .loader { color: var(--primary); animation: blink 1s infinite; font-size: 1.1rem; }
 
-        @keyframes pulse { 0% { text-shadow: 0 0 20px var(--primary); } 50% { text-shadow: 0 0 40px var(--primary), 0 0 80px var(--primary); } 100% { text-shadow: 0 0 20px var(--primary); } }
-        @keyframes blink { 50% { opacity: 0; } }
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .hud-frame { display: none; }
+            .container { padding: 30px 15px; justify-content: flex-start; padding-top: 60px; }
+            h1 { margin-bottom: 10px; letter-spacing: 2px; }
+            .slogan { font-size: 0.85rem; padding: 8px 15px; margin-bottom: 30px; width: 100%; }
+            .node-card { width: 100%; padding: 15px 20px; min-width: auto; }
+            .node-card h3 { font-size: 1.1rem; }
+        }
+
+        @keyframes pulse { 0% { text-shadow: 0 0 15px var(--primary); } 50% { text-shadow: 0 0 25px var(--primary), 0 0 50px var(--primary); } 100% { text-shadow: 0 0 15px var(--primary); } }
+        @keyframes blink { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
@@ -87,17 +97,17 @@
             <div class="hud-corner bl"></div><div class="hud-corner br"></div>
         </div>
 
-        <div style="margin-bottom: 20px; color: #666; font-size: 0.9rem; letter-spacing: 2px;">SYSTEM STATUS: ONLINE // NODE: SHENZHEN_CORE</div>
+        <div style="margin-bottom: 10px; color: #555; font-size: 0.7rem; letter-spacing: 2px;">SYS:ONLINE // SHENZHEN_NODE</div>
 
-        <h1>AICodeMate</h1>
-        <div class="slogan">致力于成为医疗领域最智能的AI编程伙伴</div>
+        <h1>AI Code Mate</h1>
+        <div class="slogan">致力于成为医疗领域最智能的 AI 编程伙伴</div>
 
         <div class="nodes-grid" id="nodes">
-            <div class="loader">>> INITIALIZING MEMBER NODES...</div>
+            <div class="loader">>> INITIALIZING NODES...</div>
         </div>
         
         <div class="status-bar">
-            SECURE CONNECTION ESTABLISHED | v1.0.0 | POWERED BY WANGCAI
+            POWERED BY WANGCAI | SECURE CONNECTION
         </div>
     </div>
 
@@ -105,55 +115,73 @@
         // 1. Particle Background
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let w, h;
+        
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
         
         let particles = [];
-        for(let i=0; i<80; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.8,
-                vy: (Math.random() - 0.5) * 0.8,
-                size: Math.random() * 2 + 1
-            });
+        function initParticles() {
+            particles = [];
+            let count = w < 768 ? 40 : 80; // Fewer particles on mobile
+            for(let i=0; i<count; i++) {
+                particles.push({
+                    x: Math.random() * w, y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 2 + 1
+                });
+            }
         }
+        initParticles();
 
         function drawBg() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.clearRect(0, 0, w, h);
             ctx.fillStyle = '#00f3ff';
             ctx.strokeStyle = 'rgba(0, 243, 255, 0.12)';
             
             particles.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
-                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                if(p.x < 0 || p.x > w) p.vx *= -1;
+                if(p.y < 0 || p.y > h) p.vy *= -1;
                 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
                 ctx.fill();
 
-                particles.forEach((p2, j) => {
-                    if(i === j) return;
+                // Connect lines
+                for(let j=i+1; j<particles.length; j++) {
+                    const p2 = particles[j];
                     const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if(dist < 160) {
+                    if(dist < 120) {
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
-                        ctx.lineWidth = 1 - dist/160;
+                        ctx.lineWidth = 1 - dist/120;
                         ctx.stroke();
                     }
-                });
+                }
             });
             requestAnimationFrame(drawBg);
         }
         drawBg();
-        window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; });
 
-        // 2. Fetch Members
+        // 2. Fetch Members & Format Name
         const OWNER = 'tophpc';
         const REPO = 'mate';
         const BASE = `https://github.com/${OWNER}/${REPO}/tree/main/members/`;
+
+        function formatName(name) {
+            // Convert "wangronghua" -> "Wangronghua" (Capitalize first letter)
+            // If it contains underscores "wang_rong_hua" -> "WangRongHua"
+            return name
+                .split(/[_-]/)
+                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+                .join('');
+        }
 
         fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/members`)
             .then(res => res.json())
@@ -163,19 +191,20 @@
                 const folders = data.filter(i => i.type === 'dir' && !i.name.startsWith('.'));
                 
                 if(folders.length === 0) {
-                    nodesDiv.innerHTML = '<div style="color:#888">NO ACTIVE NODES DETECTED</div>';
+                    nodesDiv.innerHTML = '<div style="color:#888">NO NODES</div>';
                 }
 
                 folders.forEach(f => {
                     const card = document.createElement('a');
                     card.href = BASE + f.name;
                     card.className = 'node-card';
-                    card.innerHTML = `<h3>${f.name.toUpperCase()}</h3><span>[ ACCESS NODE ]</span>`;
+                    const displayName = formatName(f.name);
+                    card.innerHTML = `<h3>${displayName}</h3><span>[ ACCESS ]</span>`;
                     nodesDiv.appendChild(card);
                 });
             })
             .catch(e => {
-                document.getElementById('nodes').innerHTML = `<div style="color:#ff4444; border:1px solid red; padding:20px;">SYSTEM ERROR: ${e.message}</div>`;
+                document.getElementById('nodes').innerHTML = `<div style="color:#ff4444; border:1px solid red; padding:20px;">ERR: ${e.message}</div>`;
             });
     </script>
 </body>
