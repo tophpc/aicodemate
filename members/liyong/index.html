@@ -2,80 +2,33 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PPT 演示 - AI Agent Training</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载资料 - AI Agent Training</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: #fff; font-family: sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
-        #canvas-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
-        canvas { max-width: 100%; max-height: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .nav { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 10; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 30px; backdrop-filter: blur(5px); }
-        .btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 8px 16px; cursor: pointer; border-radius: 5px; font-size: 16px; transition: 0.2s; }
-        .btn:hover { background: rgba(255,255,255,0.4); }
-        .btn:disabled { opacity: 0.3; cursor: default; }
-        #page-info { color: #ccc; font-size: 14px; align-self: center; min-width: 60px; text-align: center; }
-        .loader { position: absolute; color: #fff; font-size: 20px; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
-        .click-area { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 5; cursor: pointer; }
-        .click-left { left: 0; }
-        .click-right { right: 0; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: #161b22; padding: 40px; border-radius: 12px; border: 1px solid #30363d; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        h1 { color: #58a6ff; font-size: 22px; margin-bottom: 10px; }
+        p { color: #8b949e; font-size: 14px; margin-bottom: 30px; }
+        .btn-group { display: flex; flex-direction: column; gap: 15px; }
+        .btn { display: block; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.2s; border: 1px solid transparent; }
+        .btn-primary { background: #238636; color: white; border-color: #2ea043; }
+        .btn-primary:hover { background: #2ea043; }
+        .btn-secondary { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+        .btn-secondary:hover { background: #30363d; }
+        .footer { margin-top: 30px; font-size: 12px; color: #484f58; }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-    <div id="canvas-container">
-        <div class="loader" id="loader">正在加载高清文档...</div>
-        <canvas id="pdf-render"></canvas>
+    <div class="container">
+        <h1>📂 AI Agent Training 资料</h1>
+        <p>为保证最佳显示效果，请点击下载后在本地打开。</p>
         
-        <!-- Touch/Click areas for easy navigation -->
-        <div class="click-area click-left" onclick="prevPage()"></div>
-        <div class="click-area click-right" onclick="nextPage()"></div>
-
-        <div class="nav">
-            <button class="btn" id="prev" onclick="prevPage()">❮ 上一页</button>
-            <span id="page-info">0 / 0</span>
-            <button class="btn" id="next" onclick="nextPage()">下一页 ❯</button>
+        <div class="btn-group">
+            <a href="AI_Agent_Training.pdf" class="btn btn-primary">📄 下载 PDF (推荐)</a>
+            <a href="AI_Agent_Training.pptx" class="btn btn-secondary">💻 下载 PPT 源文件</a>
         </div>
+
+        <div class="footer">AICodeMate Team Share</div>
     </div>
-
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        const url = 'AI_Agent_Training.pdf';
-        let pdfDoc = null, pageNum = 1, scale = 2; // Scale 2 for retina/high-res
-        const canvas = document.getElementById('pdf-render');
-        const ctx = canvas.getContext('2d');
-
-        function renderPage(num) {
-            pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale: scale });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = { canvasContext: ctx, viewport: viewport };
-                page.render(renderContext).promise.then(() => {
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('page-info').innerText = `${num} / ${pdfDoc.numPages}`;
-                    document.getElementById('prev').disabled = (num <= 1);
-                    document.getElementById('next').disabled = (num >= pdfDoc.numPages);
-                });
-            });
-        }
-
-        function prevPage() { if (pageNum <= 1) return; pageNum--; renderPage(pageNum); }
-        function nextPage() { if (pageNum >= pdfDoc.numPages) return; pageNum++; renderPage(pageNum); }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') prevPage();
-            if (e.key === 'ArrowRight') nextPage();
-        });
-
-        pdfjsLib.getDocument(url).promise.then(pdf => {
-            pdfDoc = pdf;
-            renderPage(pageNum);
-        }).catch(err => {
-            document.getElementById('loader').innerHTML = "加载失败: " + err.message;
-        });
-    </script>
 </body>
 </html>
