@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色调 -->
+    <color name="primary">#1976D2</color>
+    <color name="primary_dark">#1565C0</color>
+    <color name="primary_light">#42A5F5</color>
+    <color name="accent">#FF6F00</color>
+
+    <!-- 背景 -->
+    <color name="login_bg">#E3F2FD</color>
+    <color name="bg_light">#F5F5F5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="white_alpha_70">#B3FFFFFF</color>
+
+    <!-- 文本 -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#9E9E9E</color>
+
+    <!-- 状态 -->
+    <color name="status_active">#4CAF50</color>
+    <color name="status_inactive">#F44336</color>
+    <color name="error_red">#D32F2F</color>
+
+    <!-- 角色 -->
+    <color name="role_admin">#E65100</color>
+    <color name="role_user">#1565C0</color>
+
+    <!-- 标签背景 -->
+    <color name="tag_bg_color">#E8EAF6</color>
+</resources>

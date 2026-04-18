@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_light">
+
+    <!-- 顶部工具栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@color/primary"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_welcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="欢迎"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_user_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="共 0 个用户"
+                android:textSize="13sp"
+                android:textColor="@color/white_alpha_70" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_add_user"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="＋ 添加用户"
+            android:textSize="14sp"
+            android:textColor="@color/primary"
+            android:backgroundTint="@color/white"
+            android:layout_marginEnd="12dp" />
+
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="退出登录"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/error_red" />
+
+    </LinearLayout>
+
+    <!-- 搜索栏 -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@color/white">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            app:queryHint="搜索用户名、姓名、邮箱或手机号..."
+            app:iconifiedByDefault="false"
+            app:searchIcon="@android:drawable/ic_menu_search" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- 用户列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_users"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false" />
+
+</LinearLayout>
